@@ -54,6 +54,10 @@ a{
 	color: #006fd9
 }
 
+select, input{
+	font-size: 20px;
+}
+
 body{
 	font-family: Arial, Helvetica, sans-serif;
 	background: #34424f;
