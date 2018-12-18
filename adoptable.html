@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Purrect Kitties - Adoptable Kittens</title>
+<link rel="stylesheet" type="text/css" href="style/style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+/*
+This script for storing and looking up cat/kitten data is way over engineered for this simple example.
+But, it does have the benefit of being easily extendable and updatable in terms of adding new functionality
+(ie characteristics) and in terms of ease of adding new cats
+*/
+var catArray = new Array(); // holds all the data about cats that exist at the facility
+
+// create all the cats and add them to the catArray
+catArray.push(makeCat("Bob", 1, "Male", true, false, true, "kitten1.jpg"));
+catArray.push(makeCat("Billy", 3, "Male", true, false, true, "kitten3.jpg"));
+catArray.push(makeCat("Jasmine", 2, "Female", false, true, true, "kitten2.jpg"));
+catArray.push(makeCat("Sandy", 5, "Female", false, true, false, "kitten4.jpg"));
+catArray.push(makeCat("Tiger", 1, "Male", true, false, false, "kitten5.jpg"));
+catArray.push(makeCat("Casper", 1, "Male", true, true, true, "kitten6.jpg"));
+catArray.push(makeCat("Lucky", 4, "Male", false, true, true, "kitten7.jpg"));
+catArray.push(makeCat("Sophie", 6, "Female", false, true, false, "kitten8.jpg"));
+catArray.push(makeCat("Harry", 5, "Male", false, false, true, "kitten9.jpg"));
+catArray.push(makeCat("Buster", 8, "Male", true, true, false, "kitten10.jpg"));
+
+// creates a cat given some characteristics
+function makeCat(name, age, gender, isShortHair, isLarge, isSociable, imageURL){
+	var cat = new Object();
+	cat.name = name;
+	cat.age = age;
+	cat.gender = gender;
+	cat.isShortHair = isShortHair;
+	cat.isLarge = isLarge;
+	cat.isSociable = isSociable;
+	cat.imageURL = imageURL;
+	return cat;
+}
+
+// returns cats that match the specified characteristic (only one characteristic can be used at a time to identify matches)
+function getCatsWithCharacteristic(maxAge, gender, isShortHair, isLarge, isSociable){
+	var matchingCats = new Array();
+	if (maxAge != null){
+		for (var i = 0; i < catArray.length; i++){
+			if (maxAge > 4 && catArray[i].age > 4 && catArray[i].age <= maxAge){
+				// kittens
+				matchingCats.push(catArray[i]); // this cat matches the characteristics, so add it to the list
+			}
+			else if (maxAge <= 4 && catArray[i].age <= maxAge){
+				// baby kittens
+				matchingCats.push(catArray[i]); // this cat matches the characteristics, so add it to the list
+			}
+		}
+	}
+	else if (gender != null){
+		for (var i = 0; i < catArray.length; i++){
+			if (catArray[i].gender == gender){
+				matchingCats.push(catArray[i]); // this cat matches the characteristics, so add it to the list
+			}
+		}
+	}
+	else if (isShortHair != null){
+		for (var i = 0; i < catArray.length; i++){
+			if (catArray[i].isShortHair == isShortHair){
+				matchingCats.push(catArray[i]); // this cat matches the characteristics, so add it to the list
+			}
+		}
+	}
+	else if (isLarge != null){
+		for (var i = 0; i < catArray.length; i++){
+			if (catArray[i].isLarge == isLarge){
+				matchingCats.push(catArray[i]); // this cat matches the characteristics, so add it to the list
+			}
+		}
+	}
+	else if (isSociable != null){
+		for (var i = 0; i < catArray.length; i++){
+			if (catArray[i].isSociable == isSociable){
+				matchingCats.push(catArray[i]); // this cat matches the characteristics, so add it to the list
+			}
+		}
+	}
+	
+	return matchingCats; // return array containing matching cats
+}
+
+// returns cats that match with the given selection
+function getCatsFromSelection(selection){
+	if (selection == "shorthair"){
+		return getCatsWithCharacteristic(null, null, true, null, null);
+	}
+	else if (selection == "longhair"){
+		return getCatsWithCharacteristic(null, null, false, null, null);
+	}
+	else if (selection == "male"){
+		return getCatsWithCharacteristic(null, "Male", null, null, null);
+	}
+	else if (selection == "female"){
+		return getCatsWithCharacteristic(null, "Female", null, null, null);
+	}
+	else if (selection == "baby"){
+		return getCatsWithCharacteristic(4, null, null, null, null);
+	}
+	else if (selection == "kitten"){
+		return getCatsWithCharacteristic(24, null, null, null, null);
+	}
+	else if (selection == "small"){
+		return getCatsWithCharacteristic(null, null, null, false, null);
+	}
+	else if (selection == "large"){
+		return getCatsWithCharacteristic(null, null, null, true, null);
+	}
+	else if (selection == "sociable"){
+		return getCatsWithCharacteristic(null, null, null, null, true);
+	}
+	else if (selection == "independent"){
+		return getCatsWithCharacteristic(null, null, null, null, false);
+	}
+	else{
+		return null;
+	}
+}
+
+// adds the given cat to the page by displaying them inside the catMatches div element
+function addCatToPage(cat){
+	if (cat == null){
+		return; // can't add null cats to the page
+	}
+	var hairType = "Short hair";
+	if (cat.isShortHair == false)
+		hairType = "Long hair";
+	var bodySize = "Small";
+	if (cat.isLarge == true)
+		bodySize = "Large";
+	var sociability = "Social";
+	if (cat.isSociable == false)
+		sociability = "Independent";
+	
+	$("#catMatches").append("<div class='cat' style='background:lightgray;text-align:center;'>"
+		+ "<fieldset style='width:800px;background-color:lightgray;margin:auto'>"
+		+ "<b>" + cat.name + "</b><br>Gender: " + cat.gender + "<br>Age: " + cat.age + " months<br>Hair Type: " + hairType + "<br>Body Size: " + bodySize + "<br>" + sociability
+		+ "<br><img src='" + cat.imageURL + "' style='height:300px;width:auto;'>"
+		+ "</fieldset><br></div>");
+}
+
+// adds a array of cat objects to the page
+function addCatsToPage(matchingCats){
+	removeCatsFromPage();
+	if (matchingCats == null
+			|| matchingCats.length < 1){
+		return; // no cats in the matchingCats array
+	}
+	for (var i = 0; i < matchingCats.length; i++){
+		addCatToPage(matchingCats[i]);
+	}
+}
+
+// removes any previous cat matches from the page if they exist
+function removeCatsFromPage(){
+	$(".cat").remove();
+}
+
+// button click functionality
+$(document).ready(function(){
+	$("#startSearch").click(function(){
+		var selection = $("#selector").val();
+		var catsFound = getCatsFromSelection(selection);
+		if (catsFound != null){
+			addCatsToPage(catsFound);
+		} else{
+			alert("Sorry, it appears that no cats have that specific characteristic. Try another one.");
+		}
+	})
+})
+</script>
+</head>
+<body>
+	<div class="header">
+		<h2>Purrfect Kitties</h2>
+		<h4>Where we match you up with the perfect kitten or cat.</h4>
+		<a href="index.html">Home</a> | <a href="about-us.html">About Us</a> | <a href="adoptable.html">Adoptable Kittens</a> | 
+		<a href="ways-to-help.html">Ways to Help</a> | <a href="location.html">Where to Find Us</a> | <a href="foster.html">Kitten Fostering</a> | 
+		<a href="contact-us.html">Contact Us</a>
+	</div>
+
+	<div class="content">
+		<h3>Find the Purrfect Kitten or Cat for You!</h3>
+		<p>Using the selection box below, select the type of cat or kitten that you would like to have based on the available<br>
+		characteristics and we'll pull up a list of cats that are perfect for you!</p>
+		<br>
+		<select id="selector" style="background-color: #92c9ff;">
+			<option value="shorthair">Short Hair</option>
+			<option value="longhair">Long Hair</option>
+			<option value="male">Male</option>
+			<option value="female">Female</option>
+			<option value="baby">Baby Kitten (under 4 months old)</option>
+			<option value="kitten">Kitten (4 months to 2 years)</option>
+			<option value="small">Small in size (when adult)</option>
+			<option value="large">Large in size (when adult)</option>
+			<option value="sociable">Sociable</option>
+			<option value="independent">Independent</option>
+		</select>
+		<input type="submit" id="startSearch" value="Find me some kitties!"><br>
+		<br>
+		<div id="catMatches">
+			<!-- cat matches will appear in here -->
+		</div>
+	</div>
+
+	<div class="footer">
+		<h4>Website by David Jaqua | ICS 225 | Metropolitan State University | Minnesota</h4>
+	</div>
+</body>
+</html>
